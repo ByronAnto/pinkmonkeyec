@@ -38,6 +38,14 @@ Logos en `assets/brand/`. Tema/marca en `docker/branding/pinkmonkey.css`. Paleta
 
 ## Despliegue
 Push a `main` → el self-hosted runner de la VM Oracle (ARM64) construye y levanta. Ver `deploy/runner-setup.md`.
+Producción: **https://pinkmonkeyec.it-services.center** (Caddy + TLS Let's Encrypt).
+
+## Backup y migración
+Cómo respaldar (BD + fotos) y migrar a otro servidor: ver **`docs/migracion-backup.md`**.
+Clave: el **código** va por git, pero la **base de datos** y las **fotos subidas** (`storage/app/public/`) hay que copiarlas aparte.
+
+## Actualizar versión de Bagisto
+Solo 4 archivos del tema están personalizados (branding). Proceso de upgrade seguro: ver **`docs/upgrade-bagisto.md`**.
 
 ## Troubleshooting
 - **`apt`/`composer`/`npm` fallan al resolver dominios dentro del contenedor:** el bridge de Docker de esta máquina no tiene salida a internet; usa `--network=host` en esos comandos (no aplica en la VM de producción).
