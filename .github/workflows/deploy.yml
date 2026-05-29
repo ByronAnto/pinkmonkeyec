@@ -1,0 +1,39 @@
+name: Deploy PinkMonkey
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, ARM64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build images (native arm64)
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml build
+
+      - name: Start / update stack
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+      - name: Run migrations
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm app php artisan migrate --force
+
+      - name: Fix storage permissions
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app sh -c 'chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache'
+
+      - name: Cache config & build assets
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm app php artisan optimize
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm --no-deps app npm run build
+
+      - name: Health check
+        run: |
+          sleep 5
+          curl -fsS -o /dev/null -w "store: %{http_code}\n" http://127.0.0.1:8080 || exit 1
