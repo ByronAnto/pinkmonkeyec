@@ -1,0 +1,22 @@
+# Secrets / entorno
+.env
+.env.*
+!.env.example
+
+# Bagisto / Laravel
+/src/vendor/
+/src/node_modules/
+/src/storage/*.key
+/src/.env
+/src/public/storage
+/src/bootstrap/cache/*.php
+
+# Docker
+*.log
+
+# Brainstorm companion
+.superpowers/
+
+# SO
+.DS_Store
+Thumbs.db
