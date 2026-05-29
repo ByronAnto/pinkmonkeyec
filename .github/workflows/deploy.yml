@@ -9,31 +9,89 @@ concurrency:
   group: deploy-prod
   cancel-in-progress: false
 
+env:
+  COMPOSE: docker compose -f docker-compose.yml -f docker-compose.prod.yml
+
 jobs:
   deploy:
     runs-on: [self-hosted, ARM64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          clean: false   # preserva vendor/ y node_modules/ entre deploys
 
-      - name: Build images (native arm64)
-        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml build
-
-      - name: Start / update stack
-        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-
-      - name: Run migrations
-        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm app php artisan migrate --force
-
-      - name: Fix storage permissions
-        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T app sh -c 'chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache'
-
-      - name: Cache config & build assets
+      - name: Armar .env desde Secrets
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm app php artisan optimize
-          docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm --no-deps app npm run build
+          cat > .env <<EOF
+          APP_NAME="Pink Monkey Ecuador"
+          APP_ENV=production
+          APP_KEY=${{ secrets.APP_KEY }}
+          APP_DEBUG=false
+          APP_URL=https://pinkmonkeyec.it-services.center
+          APP_LOCALE=es
+          APP_CURRENCY=USD
+
+          DB_CONNECTION=mysql
+          DB_HOST=db
+          DB_PORT=3306
+          DB_DATABASE=pinkmonkey
+          DB_USERNAME=pinkmonkey
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
+
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          CACHE_DRIVER=redis
+          SESSION_DRIVER=redis
+
+          MAIL_MAILER=log
+          MAIL_FROM_ADDRESS="ventas@pinkmonkey.ec"
+          MAIL_FROM_NAME="Pink Monkey Ecuador"
+          EOF
+          cp .env src/.env
+
+      - name: Build image (arm64 nativo)
+        run: $COMPOSE build
+
+      - name: Levantar db y redis
+        run: |
+          $COMPOSE up -d db redis
+          sleep 15
+
+      - name: Instalar dependencias PHP (composer)
+        run: $COMPOSE run --rm --no-deps app composer install --no-interaction --no-dev --optimize-autoloader
+
+      - name: Instalar y compilar assets (npm)
+        run: |
+          $COMPOSE run --rm --no-deps app npm install
+          $COMPOSE run --rm --no-deps app npm run build
+
+      - name: Levantar stack completo
+        run: $COMPOSE up -d
+
+      - name: Migraciones
+        run: $COMPOSE run --rm app php artisan migrate --force
+
+      - name: Seed inicial (solo si la BD está vacía)
+        run: |
+          COUNT=$($COMPOSE run --rm -T app php artisan tinker --execute='echo \Illuminate\Support\Facades\Schema::hasTable("channels") ? \Webkul\Core\Models\Channel::count() : 0;' 2>/dev/null | tr -dc '0-9' | tail -c1)
+          if [ -z "$COUNT" ] || [ "$COUNT" = "0" ]; then
+            echo "BD vacía → corriendo seeders base";
+            $COMPOSE run --rm app php artisan db:seed --force;
+          else
+            echo "BD ya tiene datos → omito seed";
+          fi
+
+      - name: storage:link + permisos
+        run: |
+          $COMPOSE run --rm app php artisan storage:link || true
+          $COMPOSE exec -T app sh -c 'chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache'
+
+      - name: Optimize (cache config/rutas)
+        run: $COMPOSE run --rm app php artisan optimize
 
       - name: Health check
         run: |
           sleep 5
-          curl -fsS -o /dev/null -w "store: %{http_code}\n" http://127.0.0.1:8080 || exit 1
+          curl -fsS -o /dev/null -w "store local: %{http_code}\n" http://127.0.0.1:8080 || exit 1
