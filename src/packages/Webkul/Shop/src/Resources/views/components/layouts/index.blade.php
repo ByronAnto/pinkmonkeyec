@@ -88,6 +88,12 @@
             </script>
         @endif
 
+        {{-- PinkMonkey brand fonts + theme (Tasks 3.1 + 3.2) --}}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('pinkmonkey.css') }}">
+
         {!! view_render_event('bagisto.shop.layout.head.after') !!}
 
     </head>
