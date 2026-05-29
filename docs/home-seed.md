@@ -93,3 +93,13 @@ docker compose exec -T app php artisan tinker --execute='
 docker compose exec -T app sh -c 'rm -rf storage/app/public/product/*'
 ```
 (Categories and blocks are re-used idempotently; delete them manually if needed.)
+
+## IMPORTANTE: reconstruir el índice de inventario tras seed
+Bagisto 2.x calcula el stock vendible desde `product_inventory_indices` (un índice), no desde `product_inventories`. Si creas productos/inventario por seeder o faker (sin eventos), el índice queda vacío y los productos salen como "no vendibles" (no se pueden agregar al carrito) aunque tengan stock.
+
+Solución (correr tras el seed):
+```bash
+docker compose exec -T -u www-data -e HOME=/tmp app php artisan tinker --execute='\
+\Webkul\Product\Jobs\UpdateCreateInventoryIndex::dispatchSync(\Webkul\Product\Models\Product::pluck("id")->toArray());'
+```
+Verificar: `SELECT COUNT(*), SUM(qty) FROM product_inventory_indices;` debe mostrar filas > 0.
