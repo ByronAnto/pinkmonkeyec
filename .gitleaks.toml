@@ -1,0 +1,14 @@
+# Gitleaks config for pinkmonkey-store
+# Extends the default ruleset and allowlists known false positives that ship
+# inside the vendored Bagisto framework (test fixtures and demo seed data).
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Ignore Bagisto bundled test fixtures and demo product data (no real secrets)"
+paths = [
+    # Bagisto demo product catalog: high-entropy url_key slugs flagged as generic-api-key
+    '''src/packages/Webkul/Installer/src/Data/demo-products\.json''',
+    # Bagisto feature tests using Google's public reCAPTCHA test keys
+    '''src/packages/Webkul/.*/tests/.*\.php''',
+]
