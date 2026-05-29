@@ -18,65 +18,15 @@
             class="container mt-14 max-lg:px-8 max-md:mt-7 max-md:!px-0 max-sm:mt-5"
             v-if="! isLoading && categories?.length"
         >
-            <div class="relative">
-                <div
-                    ref="swiperContainer"
-                    class="scrollbar-hide flex gap-10 overflow-auto scroll-smooth max-lg:gap-4"
+            <div class="pm-cat-tiles">
+                <a
+                    v-for="category in categories"
+                    :href="category.slug"
+                    class="pm-cat-tile"
+                    :aria-label="category.name"
                 >
-                    <div
-                        class="grid min-w-[120px] max-w-[120px] grid-cols-1 justify-items-center gap-4 font-medium max-md:min-w-20 max-md:max-w-20 max-md:gap-2.5 max-md:first:ml-4 max-sm:min-w-[60px] max-sm:max-w-[60px] max-sm:gap-1.5"
-                        v-for="category in categories"
-                    >
-                        <a
-                            :href="category.slug"
-                            class="h-[110px] w-[110px] rounded-full bg-zinc-100 max-md:h-20 max-md:w-20 max-sm:h-[60px] max-sm:w-[60px]"
-                            :aria-label="category.name"
-                        >
-                            <x-shop::media.images.lazy
-                                ::src="category.logo?.small_image_url || fallback"
-                                ::srcset="`
-                                    ${(category.logo?.small_image_url || fallback)} 60w,
-                                    ${(category.logo?.medium_image_url || fallback)} 110w,
-                                    ${(category.logo?.large_image_url || fallback)} 300w
-                                `"
-                                sizes="(max-width: 640px) 60px, 110px"
-                                width="110"
-                                height="110"
-                                class="w-full rounded-full max-sm:h-[60px] max-sm:w-[60px]"
-                                ::alt="category.name"
-                            />
-                        </a>
-
-                        <a
-                            :href="category.slug"
-                            class=""
-                        >
-                            <p
-                                class="text-center text-lg text-black max-md:text-base max-md:font-normal max-sm:text-sm"
-                                v-text="category.name"
-                            >
-                            </p>
-                        </a>
-                    </div>
-                </div>
-
-                <span
-                    class="icon-arrow-left-stylish absolute -left-10 top-9 flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border border-black bg-white text-2xl transition hover:bg-black hover:text-white max-lg:-left-7 max-md:hidden"
-                    role="button"
-                    aria-label="@lang('shop::components.carousel.previous')"
-                    tabindex="0"
-                    @click="swipeLeft"
-                >
-                </span>
-
-                <span
-                    class="icon-arrow-right-stylish absolute -right-6 top-9 flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded-full border border-black bg-white text-2xl transition hover:bg-black hover:text-white max-lg:-right-7 max-md:hidden"
-                    role="button"
-                    aria-label="@lang('shop::components.carousel.next')"
-                    tabindex="0"
-                    @click="swipeRight"
-                >
-                </span>
+                    <span class="pm-cat-tile-name">@{{ category.name }}</span>
+                </a>
             </div>
         </div>
 

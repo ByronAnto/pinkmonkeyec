@@ -21,6 +21,8 @@
 
             {!! view_render_event('bagisto.shop.components.layouts.header.mobile.logo.before') !!}
 
+            <div class="pm-logo-wrap">
+
             <a
                 href="{{ route('shop.home.index') }}"
                 class="flex max-h-[30px] items-center"
@@ -34,6 +36,8 @@
                     height="29"
                 >
             </a>
+
+            </div>
 
             {!! view_render_event('bagisto.shop.components.layouts.header.mobile.logo.after') !!}
         </div>

@@ -9,6 +9,8 @@
     <div class="flex items-center gap-x-10 max-[1180px]:gap-x-5">
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
 
+        <div class="pm-logo-wrap">
+
         <a
             href="{{ route('shop.home.index') }}"
             aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.bagisto')"
@@ -20,6 +22,8 @@
                 alt="{{ config('app.name') }}"
             >
         </a>
+
+        </div>
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.after') !!}
 
