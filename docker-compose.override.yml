@@ -1,4 +1,9 @@
 services:
+  app:
+    # Auto-corrige permisos de storage/cache al arrancar (evita 500 "Permission denied"
+    # cuando artisan se corrió como root). Luego arranca php-fpm normal.
+    entrypoint: ["sh","-c","chown -R www-data:www-data storage bootstrap/cache 2>/dev/null; chmod -R 775 storage bootstrap/cache 2>/dev/null; exec php-fpm"]
+
   web:
     ports:
       - "8080:80"

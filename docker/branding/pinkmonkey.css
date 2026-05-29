@@ -1,0 +1,136 @@
+/* PinkMonkey Ecuador — brand theme (Tasks 3.1 + 3.2)
+   Magenta #D64C68 (buttons/prices/accents), Pink #F599A4 (soft bg/halo), Gray #4C4C4C (text).
+   Fonts: Manrope (body) + Syne (headings). Logo treatment "B": soft radial pink halo. */
+
+:root {
+    --pm-magenta: #D64C68;
+    --pm-magenta-dark: #b83954;
+    --pm-rosa: #F599A4;
+    --pm-rosa-soft: #ffe9ef;
+    --pm-gris: #4C4C4C;
+}
+
+body {
+    font-family: 'Manrope', system-ui, sans-serif;
+    color: var(--pm-gris);
+}
+
+h1, h2, h3, .text-3xl, .text-2xl {
+    font-family: 'Syne', 'Manrope', sans-serif;
+}
+
+/* Primary buttons → brand magenta (Bagisto shop theme uses .primary-button w/ bg-navyBlue) */
+.primary-button,
+button.primary-button,
+.btn-primary {
+    background: var(--pm-magenta) !important;
+    border-color: var(--pm-magenta) !important;
+    color: #fff !important;
+    transition: background .2s ease, opacity .2s ease;
+}
+
+.primary-button:hover,
+button.primary-button:hover,
+.btn-primary:hover {
+    background: var(--pm-magenta-dark) !important;
+    border-color: var(--pm-magenta-dark) !important;
+}
+
+/* Secondary buttons → magenta outline */
+.secondary-button {
+    color: var(--pm-magenta) !important;
+    border-color: var(--pm-magenta) !important;
+}
+
+/* Prices in brand magenta — Bagisto renders prices with assorted classes containing "price" */
+.price,
+.final-price,
+[class*="price"] {
+    color: var(--pm-magenta);
+}
+
+/* Logo with soft pink halo (approved emphasis, option B).
+   The Bagisto shop logo is an <a><img></a>; we wrap it in .pm-logo-wrap. */
+.pm-logo-wrap {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    padding: 14px;
+}
+
+.pm-logo-wrap::before {
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--pm-rosa-soft) 0%, rgba(255, 233, 239, 0) 70%);
+    z-index: 0;
+    transition: transform .3s ease;
+}
+
+.pm-logo-wrap:hover::before {
+    transform: scale(1.12);
+}
+
+.pm-logo-wrap img {
+    position: relative;
+    z-index: 1;
+    /* Official logo is a stacked/vertical PNG (1000x700); the theme hardcodes
+       width=131 height=29 (wide). Force correct aspect so it isn't squashed. */
+    width: auto !important;
+    height: 64px !important;
+    max-width: none;
+    transition: transform .25s ease;
+}
+
+@media (max-width: 1024px) {
+    .pm-logo-wrap img {
+        height: 48px !important;
+    }
+}
+
+.pm-logo-wrap:hover img {
+    transform: scale(1.05);
+}
+
+/* Roomy header to give the stacked logo + halo breathing room */
+header .pm-logo-wrap {
+    margin: 4px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+    .pm-logo-wrap:hover::before,
+    .pm-logo-wrap:hover img {
+        transform: none !important;
+    }
+}
+
+/* Mapear las clases de fuente del tema a la marca */
+.font-poppins, .font-sans, body, button, input, select, textarea { font-family:'Manrope', system-ui, sans-serif !important; }
+.font-dmserif, h1, h2, h3, .text-3xl, .text-2xl { font-family:'Syne','Manrope',sans-serif !important; }
+
+/* Proteger la fuente de iconos de Bagisto (bagisto-shop) del override de tipografias.
+   Especificidad 0,2,0 para ganarle a .font-poppins/.font-sans y cargar al final. */
+[class^="icon-"][class],[class*=" icon-"][class]{font-family:"bagisto-shop"!important}
+
+/* CTA Agregar al carrito (secondary-button) solido magenta, no fantasma */
+.secondary-button{background-color:var(--pm-magenta)!important;color:#fff!important;border-color:var(--pm-magenta)!important}
+.secondary-button:hover{background-color:var(--pm-magenta-dark)!important}
+
+/* Halo del logo mas compacto en celulares (80% del trafico es movil) */
+@media (max-width: 640px){
+  .pm-logo-wrap::before{width:84px!important;height:84px!important}
+  .pm-logo-wrap img{height:42px!important}
+}
+
+/* Tiles de categorias dinamicos (Task 3.5) — renderizados via category_carousel.
+   El set de categorias viene de la API shop.api.categories.index (solo status=1),
+   por lo que activar/desactivar una categoria en admin la muestra/oculta aqui. */
+.pm-cat-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;max-width:1120px;margin:34px auto;padding:0 20px}
+.pm-cat-tile{background:#ffe9ef;border-radius:16px;padding:26px 12px;text-align:center;font-weight:700;font-size:15px;color:#4C4C4C;text-decoration:none;transition:transform .2s ease,background .2s ease;display:flex;align-items:center;justify-content:center;min-height:90px}
+.pm-cat-tile:hover{transform:translateY(-3px);background:#ffdde6}
+@media(max-width:860px){.pm-cat-tiles{grid-template-columns:repeat(2,1fr)}}

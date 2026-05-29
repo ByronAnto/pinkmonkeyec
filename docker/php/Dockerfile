@@ -3,9 +3,9 @@ FROM php:8.3-fpm
 
 # Dependencias del sistema para Bagisto
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev \
+    git unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libwebp-dev \
     libonig-dev libxml2-dev libicu-dev default-mysql-client \
- && docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
  && docker-php-ext-install -j"$(nproc)" \
     pdo_mysql mbstring bcmath gd zip intl exif pcntl opcache calendar \
  && pecl install redis && docker-php-ext-enable redis \
