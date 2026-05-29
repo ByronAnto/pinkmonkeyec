@@ -112,3 +112,17 @@ header .pm-logo-wrap {
 /* Mapear las clases de fuente del tema a la marca */
 .font-poppins, .font-sans, body, button, input, select, textarea { font-family:'Manrope', system-ui, sans-serif !important; }
 .font-dmserif, h1, h2, h3, .text-3xl, .text-2xl { font-family:'Syne','Manrope',sans-serif !important; }
+
+/* Proteger la fuente de iconos de Bagisto (bagisto-shop) del override de tipografias.
+   Especificidad 0,2,0 para ganarle a .font-poppins/.font-sans y cargar al final. */
+[class^="icon-"][class],[class*=" icon-"][class]{font-family:"bagisto-shop"!important}
+
+/* CTA Agregar al carrito (secondary-button) solido magenta, no fantasma */
+.secondary-button{background-color:var(--pm-magenta)!important;color:#fff!important;border-color:var(--pm-magenta)!important}
+.secondary-button:hover{background-color:var(--pm-magenta-dark)!important}
+
+/* Halo del logo mas compacto en celulares (80% del trafico es movil) */
+@media (max-width: 640px){
+  .pm-logo-wrap::before{width:84px!important;height:84px!important}
+  .pm-logo-wrap img{height:42px!important}
+}
