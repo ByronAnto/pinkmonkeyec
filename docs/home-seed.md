@@ -103,3 +103,28 @@ docker compose exec -T -u www-data -e HOME=/tmp app php artisan tinker --execute
 \Webkul\Product\Jobs\UpdateCreateInventoryIndex::dispatchSync(\Webkul\Product\Models\Product::pluck("id")->toArray());'
 ```
 Verificar: `SELECT COUNT(*), SUM(qty) FROM product_inventory_indices;` debe mostrar filas > 0.
+
+## Tiles de categorías dinámicos (admin-controlled) — Task 3.5
+
+El bloque de "Compra por categoría" en el home ahora es **dinámico**: activar o
+desactivar una categoría en el admin la muestra u oculta automáticamente.
+
+- **`theme_customizations` id 10** (antes `static_content` "PinkMonkey Categorias") se
+  reconvirtió a `type = 'category_carousel'`. Es una **fila de BD, no versionada en git**;
+  si se reinstala/reseedea hay que reaplicarla:
+  ```sql
+  UPDATE theme_customizations SET type='category_carousel' WHERE id=10;
+  UPDATE theme_customization_translations
+    SET options='{"title":"Compra por categoría","filters":{"parent_id":1}}'
+    WHERE theme_customization_id=10 AND locale='es';
+  ```
+- El carousel consume `shop.api.categories.index` (`/api/categories?parent_id=1`), que
+  **solo devuelve categorías con `status=1`**. Por eso el toggle activo/inactivo del admin
+  se refleja en el home sin tocar código.
+- `packages/Webkul/Shop/src/Resources/views/components/categories/carousel.blade.php` se
+  reestilizó: en vez de círculos con logo, renderiza **tiles rosa** (`.pm-cat-tile` en una
+  grilla `.pm-cat-tiles`) con el nombre de la categoría. CSS en `docker/branding/pinkmonkey.css`
+  (copia servida en `src/public/pinkmonkey.css`).
+- Tiles **solo-nombre** (no usan imagen de categoría), igual al look hardcodeado previo.
+- Verificación del toggle: con Accesorios inactivo la API lista Mujer/Hombre/Calzado; al
+  activarlo (id=4 status=1) aparece Accesorios; al desactivarlo desaparece.

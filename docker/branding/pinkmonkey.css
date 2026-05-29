@@ -126,3 +126,11 @@ header .pm-logo-wrap {
   .pm-logo-wrap::before{width:84px!important;height:84px!important}
   .pm-logo-wrap img{height:42px!important}
 }
+
+/* Tiles de categorias dinamicos (Task 3.5) — renderizados via category_carousel.
+   El set de categorias viene de la API shop.api.categories.index (solo status=1),
+   por lo que activar/desactivar una categoria en admin la muestra/oculta aqui. */
+.pm-cat-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;max-width:1120px;margin:34px auto;padding:0 20px}
+.pm-cat-tile{background:#ffe9ef;border-radius:16px;padding:26px 12px;text-align:center;font-weight:700;font-size:15px;color:#4C4C4C;text-decoration:none;transition:transform .2s ease,background .2s ease;display:flex;align-items:center;justify-content:center;min-height:90px}
+.pm-cat-tile:hover{transform:translateY(-3px);background:#ffdde6}
+@media(max-width:860px){.pm-cat-tiles{grid-template-columns:repeat(2,1fr)}}
