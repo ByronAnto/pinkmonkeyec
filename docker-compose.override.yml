@@ -1,0 +1,14 @@
+services:
+  web:
+    ports:
+      - "8080:80"
+
+  db:
+    ports:
+      - "3307:3306"
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
