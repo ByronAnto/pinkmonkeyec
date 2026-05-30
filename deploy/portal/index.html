@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monkey EC — Elige tu marca</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@600;700&family=Syne:wght@700;800&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#000;font-family:'Manrope',sans-serif}
+  .stage{position:fixed;inset:0}
+
+  .half{position:absolute;inset:0;cursor:pointer;text-decoration:none;transition:filter .4s ease}
+  .inner{position:absolute;top:50%;transform:translateY(-50%);text-align:center;z-index:4;transition:transform .5s cubic-bezier(.2,.65,.3,.9)}
+  .half img{display:block;margin:0 auto 8px;transition:transform .5s cubic-bezier(.2,.65,.3,.9)}
+  .brand{line-height:.9}
+  .tag{margin-top:8px;font-size:12px;letter-spacing:5px;text-transform:uppercase}
+  .enter{margin-top:22px;display:inline-block;font-family:'Oswald';font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:14px;padding-bottom:6px;position:relative;opacity:0;transform:translateY(14px);transition:.45s cubic-bezier(.2,.65,.3,.9)}
+  .enter::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:0;transition:width .4s ease}
+
+  /* PINK */
+  .pink{background:radial-gradient(circle at 30% 45%,#ffe0e8 0%,#F599A4 50%,#D64C68 100%);z-index:1;
+    clip-path:polygon(0 0, 52% 0, 40% 24%, 56% 34%, 42% 56%, 60% 66%, 44% 86%, 50% 100%, 0 100%)}
+  .pink .inner{left:0;width:44%;padding-left:3vw}
+  .pink img{width:150px;max-width:28vw}
+  .pink .brand{font-family:'Syne';font-weight:800;color:#fff;font-size:clamp(28px,4.2vw,62px);text-shadow:0 6px 30px rgba(140,30,60,.45)}
+  .pink .tag{color:rgba(255,255,255,.92)} .pink .enter{color:#fff} .pink .enter::after{background:#fff}
+
+  /* BLACK */
+  .black{background:radial-gradient(circle at 70% 50%,#26262d 0%,#0b0b0d 65%);z-index:1;
+    clip-path:polygon(52% 0, 100% 0, 100% 100%, 50% 100%, 44% 86%, 60% 66%, 42% 56%, 56% 34%, 40% 24%)}
+  .black .inner{right:0;width:44%;padding-right:3vw}
+  .black img{width:270px;max-width:34vw;mix-blend-mode:screen;filter:drop-shadow(0 0 34px rgba(255,255,255,.14))}
+  .black .brand{font-family:'Bebas Neue';color:#fff;font-size:clamp(34px,5vw,74px);letter-spacing:3px}
+  .black .tag{color:#9a9aa2} .black .enter{color:#fff} .black .enter::after{background:#fff}
+
+  .stage:hover .half{filter:brightness(.5) saturate(.85)}
+  .half:hover{filter:brightness(1.06)!important;z-index:2}
+  .half:hover .inner{transform:translateY(-50%) scale(1.07)}
+  .half:hover img{transform:scale(1.06) translateY(-6px)}
+  .half:hover .enter{opacity:1;transform:translateY(0)}
+  .half:hover .enter::after{width:100%}
+
+  /* ===== RAYO DE ZEUS ===== */
+  .bolt{position:fixed;inset:0;z-index:6;pointer-events:none}
+  .bolt svg{width:100%;height:100%}
+  .bolt path{fill:none;stroke-linejoin:miter;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .aura{stroke:#ff1f1f;stroke-width:34;opacity:.42;filter:blur(7px)}
+  .glow{stroke:#ff2b2b;stroke-width:15;filter:drop-shadow(0 0 10px #ff1f1f) drop-shadow(0 0 26px #ff0000) drop-shadow(0 0 48px rgba(255,0,0,.7))}
+  .core{stroke:#fff;stroke-width:4;filter:drop-shadow(0 0 8px #fff)}
+  .fork{stroke:#fff;stroke-width:2.5;opacity:.9;filter:drop-shadow(0 0 8px #ff2b2b)}
+  .draw{stroke-dasharray:2600;stroke-dashoffset:2600;animation:strike .95s cubic-bezier(.7,0,.3,1) .25s forwards}
+  .draw2{stroke-dasharray:600;stroke-dashoffset:600;animation:strike .5s ease-out .9s forwards}
+  @keyframes strike{to{stroke-dashoffset:0}}
+  .flick{animation:flick 3s ease-in-out 1.4s infinite}
+  @keyframes flick{0%,100%{opacity:1}49%{opacity:1}50%{opacity:.5}53%{opacity:1}71%{opacity:.78}73%{opacity:1}}
+
+  .flash{position:fixed;inset:0;background:radial-gradient(circle,rgba(255,40,40,.92),rgba(255,0,0,.15));z-index:9;pointer-events:none;opacity:0;animation:flash .6s ease-out .5s}
+  @keyframes flash{0%,100%{opacity:0}44%{opacity:.75}54%{opacity:.1}66%{opacity:.45}}
+
+  @keyframes inL{from{transform:translateX(-70px);opacity:0}to{transform:translateX(0);opacity:1}}
+  @keyframes inR{from{transform:translateX(70px);opacity:0}to{transform:translateX(0);opacity:1}}
+  .pink{animation:inL .85s cubic-bezier(.2,.65,.3,.9) both}
+  .black{animation:inR .85s cubic-bezier(.2,.65,.3,.9) both}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .float{animation:floaty 4s ease-in-out 1.5s infinite}
+
+  .top{position:fixed;top:0;left:0;right:0;z-index:7;text-align:center;padding:30px 20px;pointer-events:none}
+  .top .logo{font-family:'Bebas Neue';font-size:58px;letter-spacing:14px;color:#fff;line-height:1;text-shadow:0 2px 22px rgba(0,0,0,.7),0 0 30px rgba(255,255,255,.15)}
+  .top .logo b{color:#ff2b2b;font-weight:400;text-shadow:0 0 18px rgba(255,43,43,.8)}
+  .top .sub{display:inline-flex;align-items:center;gap:16px;font-family:'Oswald';font-weight:600;font-size:15px;letter-spacing:8px;color:#fff;text-transform:uppercase;margin-top:12px;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+  .top .sub::before,.top .sub::after{content:"";width:46px;height:1.5px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85))}
+  .top .sub::after{background:linear-gradient(90deg,rgba(255,255,255,.85),transparent)}
+
+  /* ===== RESPONSIVE CELULARES — el rayo sigue partiendo a la mitad ===== */
+  @media(max-width:760px){
+    .pink .inner{width:46%;padding-left:2vw}
+    .black .inner{width:46%;padding-right:2vw}
+    .pink img{width:92px}.black img{width:120px}
+    .tag{font-size:10px;letter-spacing:3px}
+    .enter{font-size:12px;margin-top:16px}
+    .glow{stroke-width:11}.aura{stroke-width:24}
+    .top{padding:20px 14px}
+    .top .logo{font-size:40px;letter-spacing:8px}
+    .top .sub{font-size:12px;letter-spacing:5px;gap:10px}
+    .top .sub::before,.top .sub::after{width:28px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}.draw,.draw2{stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<div class="top"><div class="logo">MONKEY <b>EC</b></div><div class="sub">Elige tu estilo</div></div>
+
+<div class="stage">
+  <a class="half pink" href="https://pinkmonkeyec.it-services.center">
+    <div class="inner">
+      <img class="float" src="./pink-monkey-logo.png" alt="Pink Monkey">
+      <div class="brand">PINK<br>MONKEY</div>
+      <div class="tag">Sportwear</div>
+      <div class="enter">Entrar →</div>
+    </div>
+  </a>
+  <a class="half black" href="https://blackmonkeyec.it-services.center">
+    <div class="inner">
+      <img class="float" src="./black-monkey-logo.jpeg" alt="Black Monkey">
+      <div class="brand">BLACK<br>MONKEY</div>
+      <div class="tag">Sportwear</div>
+      <div class="enter">Entrar →</div>
+    </div>
+  </a>
+
+  <!-- Rayo de Zeus: aura + glow rojo + núcleo blanco + bifurcación -->
+  <div class="bolt flick">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path class="aura" d="M52 0 L40 24 L56 34 L42 56 L60 66 L44 86 L50 100"/>
+      <path class="glow draw" d="M52 0 L40 24 L56 34 L42 56 L60 66 L44 86 L50 100"/>
+      <path class="core draw" d="M52 0 L40 24 L56 34 L42 56 L60 66 L44 86 L50 100"/>
+      <path class="fork glow draw2" d="M42 56 L28 62 L34 72"/>
+      <path class="fork draw2" d="M56 34 L68 40"/>
+    </svg>
+  </div>
+</div>
+<div class="flash"></div>
+
+
+</body>
+</html>
