@@ -6,7 +6,7 @@ de Bagisto que sirve Pink Monkey. Un solo Bagisto, dos marcas:
 | Marca        | Channel | Hostname                          | Tema (CSS)        | Root cat | Locale | Moneda |
 |--------------|---------|-----------------------------------|-------------------|----------|--------|--------|
 | Pink Monkey  | 1       | `http://localhost:8080`           | `pinkmonkey.css`  | 1        | es     | USD    |
-| Black Monkey | 2       | `blackmonkey.it-services.center`  | `blackmonkey.css` | 6        | es     | USD    |
+| Black Monkey | 2       | `blackmonkeyec.it-services.center`  | `blackmonkey.css` | 6        | es     | USD    |
 
 Bagisto resuelve el canal por el **hostname del request**. En producción cada marca
 apunta su dominio a la misma app; en local se prueba con un header `Host:`.
@@ -68,12 +68,12 @@ productos sean vendibles (qty 100).
 
 ```bash
 # Black resuelve dark (vía Host header, sin DNS)
-curl -s -H "Host: blackmonkey.it-services.center" http://localhost:8080 \
+curl -s -H "Host: blackmonkeyec.it-services.center" http://localhost:8080 \
   | grep -oE "ENTRENA|COMO BESTIA|blackmonkey.css|Bebas|BLACK MONKEY SPORTWEAR"
-curl -s -o /dev/null -w "%{http_code}\n" -H "Host: blackmonkey.it-services.center" http://localhost:8080
+curl -s -o /dev/null -w "%{http_code}\n" -H "Host: blackmonkeyec.it-services.center" http://localhost:8080
 
 # Productos de Black por API (canal aislado, no se mezclan con Pink)
-curl -s -H "Host: blackmonkey.it-services.center" "http://localhost:8080/api/products?featured=1"
+curl -s -H "Host: blackmonkeyec.it-services.center" "http://localhost:8080/api/products?featured=1"
 
 # Pink intacto
 curl -s http://localhost:8080 | grep -oE "pinkmonkey.css|TU MEJOR VERSIÓN"

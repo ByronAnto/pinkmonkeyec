@@ -4,7 +4,7 @@
  *
  * Adds a SECOND brand as a new Bagisto CHANNEL (multi-store) alongside Pink Monkey.
  * One Bagisto, two brands: Pink stays channel 1 (localhost:8080), Black is a new
- * channel on hostname blackmonkey.it-services.center with its OWN dark theme,
+ * channel on hostname blackmonkeyec.it-services.center with its OWN dark theme,
  * OWN root category + catalog, and OWN homepage blocks.
  *
  * Run inside the app container (as www-data to keep perms sane):
@@ -36,7 +36,7 @@ use Illuminate\Support\Str;
 
 $BRAND_CODE     = 'black';
 $BRAND_NAME     = 'Black Monkey';
-$BRAND_HOSTNAME = 'blackmonkey.it-services.center';
+$BRAND_HOSTNAME = 'blackmonkeyec.it-services.center';
 $LOCALE_CODE    = 'es';
 $CURRENCY_CODE  = 'USD';
 $THEME_CODE     = 'default';
